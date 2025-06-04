@@ -3,7 +3,7 @@ import os
 import requests
 
 API_URL = "https://ark.cn-beijing.volces.com/api/v3/drive/prediction"
-MODEL_ID = "ep-20250603194600-lxnmn"
+MODEL_ID = "ep-20250604190239-jf8lv"
 
 def handler(request):
     try:
