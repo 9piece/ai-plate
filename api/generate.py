@@ -1,8 +1,12 @@
-import json
 import os
-import requests
+import json
+from openai import OpenAI
 
-API_URL = "https://ark.cn-beijing.volces.com/api/v3/drive/prediction"
+client = OpenAI(
+    base_url="https://ark.cn-beijing.volces.com/api/v3",
+    api_key=os.getenv("ARK_API_KEY")
+)
+
 MODEL_ID = os.getenv("MODEL_ID", "")
 
 def handler(request):
@@ -10,26 +14,23 @@ def handler(request):
         body = request.json()
         prompt = body.get("prompt", "")
 
-        ACCESS_KEY = os.getenv("ACCESS_KEY")
-        if not ACCESS_KEY or not MODEL_ID:
+        if not prompt or not MODEL_ID:
             return {
-                "statusCode": 500,
-                "body": json.dumps({"error": "Missing ACCESS_KEY or MODEL_ID in environment variables."})
+                "statusCode": 400,
+                "body": json.dumps({"error": "Missing prompt or MODEL_ID"})
             }
 
-        payload = {
-            "model_id": MODEL_ID,
-            "input": {"prompt": prompt}
-        }
+        # 发起图像生成请求
+        response = client.images.generate(
+            model=MODEL_ID,
+            prompt=prompt,
+            size="1024x1024",
+            response_format="url",
+            guidance_scale=3,
+            watermark=True
+        )
 
-        headers = {
-            "Authorization": f"Bearer {ACCESS_KEY}",
-            "Content-Type": "application/json"
-        }
-
-        res = requests.post(API_URL, json=payload, headers=headers)
-        result = res.json()
-        image_url = result.get("data", {}).get("prediction_result", {}).get("image_url", "")
+        image_url = response.data[0].url if response.data else ""
 
         return {
             "statusCode": 200,
