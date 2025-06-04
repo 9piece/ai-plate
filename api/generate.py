@@ -3,7 +3,7 @@ import os
 import requests
 
 API_URL = "https://ark.cn-beijing.volces.com/api/v3/drive/prediction"
-MODEL_ID = "ep-20250604190239-jf8lv"
+MODEL_ID = os.getenv("MODEL_ID", "")
 
 def handler(request):
     try:
@@ -11,12 +11,10 @@ def handler(request):
         prompt = body.get("prompt", "")
 
         ACCESS_KEY = os.getenv("ACCESS_KEY")
-        SECRET_KEY = os.getenv("SECRET_KEY")
-
-        if not ACCESS_KEY or not SECRET_KEY:
+        if not ACCESS_KEY or not MODEL_ID:
             return {
                 "statusCode": 500,
-                "body": json.dumps({"error": "Missing ACCESS_KEY or SECRET_KEY in environment variables."})
+                "body": json.dumps({"error": "Missing ACCESS_KEY or MODEL_ID in environment variables."})
             }
 
         payload = {
@@ -25,7 +23,7 @@ def handler(request):
         }
 
         headers = {
-            "Authorization": f"Bearer {ACCESS_KEY}:{SECRET_KEY}",
+            "Authorization": f"Bearer {ACCESS_KEY}",
             "Content-Type": "application/json"
         }
 
