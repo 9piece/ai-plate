@@ -1,0 +1,15 @@
+body {
+  font-family: sans-serif;
+  text-align: center;
+  padding: 2em;
+}
+input {
+  width: 300px;
+  padding: 0.5em;
+  margin: 1em;
+}
+img {
+  max-width: 400px;
+  margin-top: 1em;
+  border: 1px solid #ccc;
+}
